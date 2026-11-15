@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>坦克大战 · 联机</title>
+<style>
+:root{
+  --surface:#e9e9e7;--panel:#f5f5f3;--line:#c9c9c6;--text:#26262a;--text-2:#6a6a70;
+  --player:#2563eb;--enemy:#dc2626;--radius:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font:15px/1.6 ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei",sans-serif;
+  color:var(--text);background:linear-gradient(#dcdcda,#cfcfcd);
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100dvh;padding:14px;gap:10px;overflow:hidden;
+}
+#topbar{width:min(1200px,100%);display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:8px 14px}
+#topbar h1{font-size:17px;letter-spacing:2px;margin-right:6px}
+.hud-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)}
+.hud-item b{color:var(--text);font-size:14px}
+#hpbar{width:140px;height:10px;background:#dcdcd8;border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+#hpfill{height:100%;width:100%;background:var(--player);transition:width .15s ease-out}
+#frame{position:relative;width:min(1200px,100%);aspect-ratio:3/2;
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  background:var(--surface);box-shadow:0 10px 30px rgba(0,0,0,.18)}
+canvas{display:block;width:100%;height:100%;cursor:crosshair}
+#hint{width:min(1200px,100%);font-size:12.5px;color:var(--text-2);
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+kbd{background:var(--panel);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;
+  padding:0 5px;font:12px/1.7 ui-monospace,monospace}
+#overlay,#startoverlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:16px;background:rgba(24,24,28,.55);backdrop-filter:blur(3px);z-index:3;text-align:center;padding:0 20px}
+#overlay{opacity:0;pointer-events:none;transition:opacity .25s ease-out}
+#overlay.show{opacity:1;pointer-events:auto}
+#overlay h2,#startoverlay h1{color:#f4f4f2}
+#startoverlay h1{font-size:42px;letter-spacing:16px;margin-left:16px}
+#overlay h2{font-size:34px;letter-spacing:6px}
+#overlay p,#startoverlay p{color:#c9c9c4;font-size:14px}
+#startoverlay .tip{font-size:12.5px;color:#8f8f8a;word-break:break-all}
+#overlay button,#startoverlay button{
+  font:600 15px/1 ui-sans-serif,system-ui,"Microsoft YaHei",sans-serif;letter-spacing:2px;
+  color:#fff;background:var(--player);border:none;border-radius:8px;padding:12px 34px;cursor:pointer}
+#overlay button:hover,#startoverlay button:hover{background:#1d4fd7}
+#conn{position:absolute;top:8px;left:10px;font-size:12px;color:#52525b;background:rgba(245,245,243,.85);
+  border:1px solid var(--line);border-radius:6px;padding:2px 8px;z-index:4}
+</style>
+</head>
+<body>
+<header id="topbar">
+  <h1>坦克大战 · 联机</h1>
+  <div class="hud-item">生命 <span id="hpbar"><span id="hpfill" style="display:block"></span></span> <b id="hptext">3</b></div>
+  <div class="hud-item">剩余敌人 <b id="eftext">4</b></div>
+  <div class="hud-item">击毁 <b id="killtext">0</b></div>
+  <div class="hud-item" id="roominfo">房间 -</div>
+</header>
+
+<div id="frame">
+  <canvas id="game" width="1200" height="800"></canvas>
+  <div id="conn">连接中…</div>
+  <div id="startoverlay">
+    <h1>坦克大战</h1>
+    <p><kbd>W</kbd>/<kbd>S</kbd> 前进后退 · <kbd>A</kbd>/<kbd>D</kbd> 转向 · <kbd>J</kbd> 开火</p>
+    <p class="tip">把地址栏链接发给同学（同一个 room 即同一战局）<br><span id="sharelink"></span></p>
+    <button id="startbtn" type="button">开 始 游 戏</button>
+    <p class="tip">任意玩家按开始即开局，最多 4 人</p>
+  </div>
+  <div id="overlay">
+    <h2 id="ovtitle"></h2>
+    <p id="ovdesc"></p>
+    <button id="restart" type="button">重新开始</button>
+  </div>
+</div>
+
+<div id="hint">
+  <span>服务器权威模拟 · 你的操作会有一点点网络延迟</span>
+  <span><kbd>R</kbd> 重开（所有人回到出生点）</span>
+</div>
+
+<script src="/net/client.js"></script>
+</body>
+</html>

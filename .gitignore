@@ -1,0 +1,8 @@
+node_modules/
+npm-debug.log
+.DS_Store
+*.local
+verify-net.cjs
+tank-p1.png
+tank-p2.png
+tank-solo.png
